@@ -1,1 +1,105 @@
-write a single page web html document with javascript and css that calculates the mean, median, standard deviation, and interquartile range of a list of numbers entered into a text box when the user presses a button
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="button"] {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Statistics Calculator</h2>
+        <input type="text" id="numbersInput" placeholder="Enter numbers separated by commas">
+        <br>
+        <input type="button" value="Calculate" onclick="calculateStatistics()">
+        <br><br>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function calculateStatistics() {
+            var numbersInput = document.getElementById("numbersInput").value.trim();
+            var numbersArray = numbersInput.split(",").map(Number).filter(Boolean);
+
+            if (numbersArray.length === 0) {
+                document.getElementById("results").innerHTML = "Please enter valid numbers.";
+                return;
+            }
+
+            var mean = calculateMean(numbersArray);
+            var median = calculateMedian(numbersArray);
+            var standardDeviation = calculateStandardDeviation(numbersArray);
+            var interquartileRange = calculateInterquartileRange(numbersArray);
+
+            var resultText = "<b>Mean:</b> " + mean.toFixed(2) + "<br>" +
+                             "<b>Median:</b> " + median.toFixed(2) + "<br>" +
+                             "<b>Standard Deviation:</b> " + standardDeviation.toFixed(2) + "<br>" +
+                             "<b>Interquartile Range:</b> " + interquartileRange.toFixed(2);
+
+            document.getElementById("results").innerHTML = resultText;
+        }
+
+        function calculateMean(numbersArray) {
+            var sum = numbersArray.reduce((a, b) => a + b, 0);
+            return sum / numbersArray.length;
+        }
+
+        function calculateMedian(numbersArray) {
+            numbersArray.sort((a, b) => a - b);
+            var middle = Math.floor(numbersArray.length / 2);
+            if (numbersArray.length % 2 === 0) {
+                return (numbersArray[middle - 1] + numbersArray[middle]) / 2;
+            } else {
+                return numbersArray[middle];
+            }
+        }
+
+        function calculateStandardDeviation(numbersArray) {
+            var mean = calculateMean(numbersArray);
+            var squaredDifferences = numbersArray.map(num => Math.pow(num - mean, 2));
+            var variance = calculateMean(squaredDifferences);
+            return Math.sqrt(variance);
+        }
+
+        function calculateInterquartileRange(numbersArray) {
+            numbersArray.sort((a, b) => a - b);
+            var q1 = calculateMedian(numbersArray.slice(0, Math.floor(numbersArray.length / 2)));
+            var q3 = calculateMedian(numbersArray.slice(Math.ceil(numbersArray.length / 2)));
+            return q3 - q1;
+        }
+    </script>
+</body>
+</html>
